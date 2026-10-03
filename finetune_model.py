@@ -531,6 +531,8 @@ args_json['root_path'] = root_path
 args_json['least_epochs'] = args.least_epochs
 args_json['dataset'] = dataset
 args_json['batch_size'] = batch_size
+args_json['num_workers'] = args.num_workers
+args_json['accumulation_steps'] = args.accumulation_steps
 args_json['adapter_layers'] = adapter_layers
 args_json['dropout'] = args.dropout
 args_json['early_cycle_threshold'] = early_cycle_threshold
@@ -592,8 +594,8 @@ for ii in range(args.itr):
         model = CPTransformerDeepSeekMoE.Model(model_config)
     elif args.model == 'PBT':
         model_ec_config = BatteryElectrochemicalConfig(args.__dict__)
-        model_text_config = AutoConfig.from_pretrained(args.LLM_path)
-        model_config = BatteryLifeConfig(model_ec_config, model_text_config)
+        # PBT uses precomputed prompt embeddings, without an LLM backbone.
+        model_config = BatteryLifeConfig(model_ec_config)
         model = PBT.Model(model_config)
     elif args.model == 'CPMLP':
         model_ec_config = BatteryElectrochemicalConfig(args.__dict__)
@@ -676,6 +678,9 @@ for ii in range(args.itr):
     trained_parameters_names = []
     use_view_experts = True
 
+    # Load before adapter wrappers rename pretrained keys under original_layer.
+    load_checkpoint_in_model(model, args_path)
+
     if finetune_method == 'FT':
         # free the general experts and tune other parameters
         for name, p in model.named_parameters():
@@ -738,6 +743,11 @@ for ii in range(args.itr):
         else:
             raise Exception(f'{finetune_method} is not implemented!')
 
+    if finetune_method != 'FT':
+        trainable_ids = {id(p) for p in trained_parameters}
+        for p in model.parameters():
+            p.requires_grad_(id(p) in trainable_ids)
+
     accelerator.print(f'Trainable parameters are: {trained_parameters_names}')
     if args.wd == 0:
         model_optim = optim.Adam(trained_parameters, lr=args.learning_rate, weight_decay=args.wd)
@@ -749,7 +759,6 @@ for ii in range(args.itr):
     criterion = nn.MSELoss(reduction='none') if args.loss == 'MSE' else nn.HuberLoss(reduction='none', delta=2.0)
     rnc_criterion = WeightedRnCLoss(temperature=args.temperature) if args.weighted_CLDG else AverageRnCLoss(temperature=args.temperature)
     
-    load_checkpoint_in_model(model, args_path) # load the pretrained parameters into model
     accelerator.print(f'The model is {args.model}')
     accelerator.print(f'load model from:\n {args_path}')
     accelerator.print(f'Model is loaded!')
