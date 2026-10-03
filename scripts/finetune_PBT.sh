@@ -20,7 +20,9 @@ seq_len="${SEQ_LEN:-1}"
 early_cycle_threshold="${EARLY_CYCLE_THRESHOLD:-100}"
 # The trainer clears an existing run directory; use a unique name each time.
 comment="${RUN_NAME:-${finetune_dataset}_AT_$(date +%Y%m%d_%H%M%S)_$$}"
-# Enable W&B tracking by default; set WANDB_MODE=offline or disabled to override.
+# Track against the local W&B server by default. Environment variables can
+# override the server address or select offline/disabled mode.
+export WANDB_BASE_URL="${WANDB_BASE_URL:-http://localhost:8080}"
 export WANDB_MODE="${WANDB_MODE:-online}"
 
 export PYTHONUNBUFFERED=1
@@ -30,6 +32,7 @@ log_file="$log_dir/$comment.log"
 
 run_finetune() {
   printf 'Run: %s\nLog: %s\nCheckpoint root: %s\n' "$comment" "$log_file" "$checkpoints"
+  printf 'W&B mode: %s | Server: %s\n' "$WANDB_MODE" "$WANDB_BASE_URL"
   for required in args.json model.safetensors label_scaler; do
     if [[ ! -f "$args_path$required" ]]; then
       printf 'Missing checkpoint file: %s\n' "$args_path$required" >&2
