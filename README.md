@@ -38,6 +38,13 @@ python download_LLM_from_hf # download LLM from huggingface
 ```
 Then, you should run all cells in the `generate_aging_condition_pretraining.ipynb` to generate the embeddings.
 
+PBT evaluation uses the pre-generated `training_DKP_embed_all_Llama.pkl`,
+`validation_DKP_embed_all_Llama.pkl`, and `testing_DKP_embed_all_Llama.pkl`
+files in `root_path`. It does not require a local LLM, tokenizer, or PCA file.
+The dataset directory must also include `seen_unseen_labels/` metadata from
+the [official BatteryLife repository](https://github.com/Ruifeng-Tan/BatteryLife/tree/main/dataset/seen_unseen_labels).
+The prompt embeddings and checkpoint alone are insufficient for evaluation.
+
 ## Pretrain the PBT model
 Please run the following command to train the PBT model:
 ```

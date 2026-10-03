@@ -183,7 +183,7 @@ class BatteryMoEFlattenIntraCycleMoELayer(nn.Module):
 
         final_out = 0
         if total_outs:
-            total_outs = dispatcher.combine(total_outs).to(torch.bfloat16) # [B, L, d_model]
+            total_outs = dispatcher.combine(total_outs).to(total_outs[0].dtype) # [B, L, d_model]
             final_out = total_outs
 
         # for i in range(self.num_general_experts):
@@ -271,7 +271,7 @@ class BatteryMoEIntraCycleMoELayer(nn.Module):
 
         final_out = 0
         if total_outs:
-            total_outs = dispatcher.combine(total_outs).to(torch.bfloat16) # [B, L, d_model]
+            total_outs = dispatcher.combine(total_outs).to(total_outs[0].dtype) # [B, L, d_model]
             final_out = total_outs
         # for i in range(self.num_general_experts):
         #     final_out = self.general_experts[i](cycle_curve_data) + final_out
@@ -359,7 +359,7 @@ class BatteryMoEInterCycleMoELayer(nn.Module):
 
         final_out = 0
         if total_outs:
-            total_outs = dispatcher.combine(total_outs).to(torch.bfloat16) # [B, L, d_model]
+            total_outs = dispatcher.combine(total_outs).to(total_outs[0].dtype) # [B, L, d_model]
             final_out = total_outs
 
         LB_loss = 0
@@ -433,7 +433,7 @@ class BatteryMoEOutputMoELayer(nn.Module):
                 total_expert_outs.append(out)
 
 
-        total_outs = dispatcher.combine(total_outs).to(torch.bfloat16) # [B, L, d_model]
+        total_outs = dispatcher.combine(total_outs).to(total_outs[0].dtype) # [B, L, d_model]
 
         final_out = total_outs
         # for i in range(self.num_general_experts):
@@ -482,20 +482,12 @@ class Model(nn.Module):
         self.n_heads = configs.n_heads
         self.charge_discharge_length = configs.charge_discharge_length
 
-        # loading llama-2-7b model configs
-        # 加载llama-2-7B模型参数
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            configs.LLM_path,
-            # 'huggyllama/llama-7b',
-            trust_remote_code=True,
-            local_files_only=True, 
-            pad_token='<|endoftext|>'
-        )
+        # Prompt embeddings are supplied by the data loader. PBT does not
+        # tokenize text or apply PCA, so initialization needs neither asset.
         self.charge_discharge_length = configs.charge_discharge_length
         self.early_cycle_threshold = configs.early_cycle_threshold
         self.d_model = configs.d_model
         self.d_llm = configs.d_llm
-        self.tokenizer.padding_side = 'right' # set the padding side
         self.e_layers = configs.e_layers
         self.d_layers = configs.d_layers
         self.moe_layers = configs.e_layers+configs.d_layers
@@ -515,8 +507,6 @@ class Model(nn.Module):
         self.gate_d_ff = configs.gate_d_ff
         self.dk_factor = configs.dk_factor
         self.gate_domain_knowledge_neurons = self.num_experts * configs.dk_factor
-
-        self.pca_scaler = pickle.load(open(configs.pca_path, 'rb'))
 
         assert self.gate_d_ff >= self.gate_domain_knowledge_neurons, Exception('The gate neurons should be no less than the domain-knowledge neurons')
         self.gate = nn.Sequential(nn.Linear(self.d_llm, self.gate_d_ff, bias=True), nn.LeakyReLU())
@@ -584,8 +574,11 @@ class Model(nn.Module):
         '''
         # process the charge&discharge data
         B, L, num_var, fixed_len = cycle_curve_data.shape[0], cycle_curve_data.shape[1], cycle_curve_data.shape[2], cycle_curve_data.shape[3]
-        cycle_curve_data, curve_attn_mask = cycle_curve_data.to(torch.bfloat16), curve_attn_mask.to(torch.bfloat16)
-        DKP_embeddings = DKP_embeddings.to(torch.bfloat16)
+        # Follow model precision; forcing bf16 breaks full-precision MPS/CPU runs.
+        input_dtype = self.gate[0].weight.dtype
+        cycle_curve_data = cycle_curve_data.to(input_dtype)
+        curve_attn_mask = curve_attn_mask.to(input_dtype)
+        DKP_embeddings = DKP_embeddings.to(input_dtype)
 
         total_masks = [combined_masks]
 

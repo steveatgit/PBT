@@ -137,7 +137,7 @@ def add_adapters_to_PBT_withCP_no_bottom(args, model, adapter_size=64):
     original_layer = model.flattenIntraCycleLayer
     model.flattenIntraCycleLayer = PBTtLayerWithAdapter(
         args,
-        original_layer, 
+        original_layer,
         adapter_size=adapter_size
         )
 
@@ -146,16 +146,16 @@ def add_adapters_to_PBT_withCP_no_bottom(args, model, adapter_size=64):
         original_layer = model.intra_MoE_layers[i]
         model.intra_MoE_layers[i] = PBTtLayerWithAdapter(
             args,
-            original_layer, 
+            original_layer,
             adapter_size=adapter_size
         )
-    
+
     for i in range(len(model.inter_MoE_layers)):
         # add adapters to inter-cycle encoder layers
         original_layer = model.inter_MoE_layers[i]
         model.inter_MoE_layers[i] = PBTtLayerWithAdapter(
             args,
-            original_layer, 
+            original_layer,
             adapter_size=adapter_size
         )
 
@@ -168,16 +168,16 @@ def add_adapters_to_PBT(args, model, adapter_size=64):
         original_layer = model.intra_MoE_layers[i]
         model.intra_MoE_layers[i] = PBTtLayerWithAdapter(
             args,
-            original_layer, 
+            original_layer,
             adapter_size=adapter_size
         )
-    
+
     for i in range(len(model.inter_MoE_layers)):
         # add adapters to inter-cycle encoder layers
         original_layer = model.inter_MoE_layers[i]
         model.inter_MoE_layers[i] = PBTtLayerWithAdapter(
             args,
-            original_layer, 
+            original_layer,
             adapter_size=adapter_size
         )
 
@@ -198,10 +198,10 @@ def add_adapters_to_PBT_flex(args, model, adapter_size=64):
         original_layer = model.intra_MoE_layers[i]
         model.intra_MoE_layers[i] = PBTtLayerWithAdapter(
             args,
-            original_layer, 
+            original_layer,
             adapter_size=adapter_size
         )
-    
+
     for i in range(len(model.inter_MoE_layers)):
         if i >= adapter_layer_num_for_decoder:
             break
@@ -209,7 +209,7 @@ def add_adapters_to_PBT_flex(args, model, adapter_size=64):
         original_layer = model.inter_MoE_layers[i]
         model.inter_MoE_layers[i] = PBTtLayerWithAdapter(
             args,
-            original_layer, 
+            original_layer,
             adapter_size=adapter_size
         )
 
@@ -221,7 +221,7 @@ def add_adapters_to_PBT_withCP(args, model, adapter_size=64):
     original_layer = model.flattenIntraCycleLayer
     model.flattenIntraCycleLayer = PBTCPLayerWithAdapter(
         args,
-        original_layer, 
+        original_layer,
         adapter_size=adapter_size
     )
 
@@ -230,16 +230,16 @@ def add_adapters_to_PBT_withCP(args, model, adapter_size=64):
         original_layer = model.intra_MoE_layers[i]
         model.intra_MoE_layers[i] = PBTtLayerWithAdapter(
             args,
-            original_layer, 
+            original_layer,
             adapter_size=adapter_size
         )
-    
+
     for i in range(len(model.inter_MoE_layers)):
         # add adapters to inter-cycle encoder layers
         original_layer = model.inter_MoE_layers[i]
         model.inter_MoE_layers[i] = PBTtLayerWithAdapter(
             args,
-            original_layer, 
+            original_layer,
             adapter_size=adapter_size
         )
 
@@ -254,7 +254,7 @@ def add_adapters_to_PBT_withCP_flex(args, model, adapter_size=64):
     original_layer = model.flattenIntraCycleLayer
     model.flattenIntraCycleLayer = PBTtLayerWithAdapter(
         args,
-        original_layer, 
+        original_layer,
         adapter_size=adapter_size
         )
 
@@ -267,10 +267,10 @@ def add_adapters_to_PBT_withCP_flex(args, model, adapter_size=64):
         original_layer = model.intra_MoE_layers[i]
         model.intra_MoE_layers[i] = PBTtLayerWithAdapter(
             args,
-            original_layer, 
+            original_layer,
             adapter_size=adapter_size
         )
-    
+
     for i in range(len(model.inter_MoE_layers)):
         if i >= adapter_layer_num_for_decoder:
             break
@@ -278,7 +278,7 @@ def add_adapters_to_PBT_withCP_flex(args, model, adapter_size=64):
         original_layer = model.inter_MoE_layers[i]
         model.inter_MoE_layers[i] = PBTtLayerWithAdapter(
             args,
-            original_layer, 
+            original_layer,
             adapter_size=adapter_size
         )
 
@@ -307,7 +307,7 @@ def calculate_metrics_based_on_seen_number_of_cycles(total_preds, total_referenc
         number_MAPE[number] = float(mape)
         number_alphaAcc1[number] = float(alpha_acc)
         number_alphaAcc2[number] = float(alpha_acc2)
-    
+
     os.makedirs(output_path, exist_ok=True)
     with open(os.path.join(output_path, f'number_MAPE_{model}_{dataset}_{trained_dataset}_{seed}.json'), 'w') as f:
         json.dump(number_MAPE, f)
@@ -486,403 +486,404 @@ parser.add_argument('--eval_cycle_min', type=int, default=10, help='The lower bo
 parser.add_argument('--eval_cycle_max', type=int, default=10, help='The upper bound for evaluation')
 parser.add_argument('--results_dir', type=str, default='', help='directory for the detailed evaluation JSON')
 parser.add_argument('--metrics_output', type=str, default='', help='path for the concise metrics text file')
-args = parser.parse_args()
-eval_cycle_min = args.eval_cycle_min
-eval_cycle_max = args.eval_cycle_max
-batch_size = args.batch_size
-results_dir = args.results_dir
-metrics_output = args.metrics_output
-if eval_cycle_min < 0 or eval_cycle_max <0:
-    eval_cycle_min = None
-    eval_cycle_max = None
+if __name__ == '__main__':
+    args = parser.parse_args()
+    eval_cycle_min = args.eval_cycle_min
+    eval_cycle_max = args.eval_cycle_max
+    batch_size = args.batch_size
+    results_dir = args.results_dir
+    metrics_output = args.metrics_output
+    if eval_cycle_min < 0 or eval_cycle_max <0:
+        eval_cycle_min = None
+        eval_cycle_max = None
 
-nowtime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-set_seed(args.seed)
-# ddp_kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
-# deepspeed_plugin = DeepSpeedPlugin(hf_ds_config='./ds_config_zero_ours.json')
-# accelerator = Accelerator(kwargs_handlers=[ddp_kwargs], deepspeed_plugin=deepspeed_plugin)
-ddp_kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
-# deepspeed_plugin = DeepSpeedPlugin(hf_ds_config='./ds_config_zero_ours.json')
-# accelerator = Accelerator(kwargs_handlers=[ddp_kwargs], deepspeed_plugin=deepspeed_plugin, gradient_accumulation_steps=args.accumulation_steps)
-accelerator = Accelerator(kwargs_handlers=[ddp_kwargs], gradient_accumulation_steps=args.accumulation_steps)
-# load from the saved path
-args_path = args.args_path
-dataset = args.eval_dataset
-cli_model = args.model
-alpha = args.alpha1
-alpha2 = args.alpha2
-cli_root_path = args.root_path
-args_json = json.load(open(f'{args_path}args.json'))
-trained_dataset = args_json['dataset']
-# The command line identifies the dataset being evaluated.  The checkpoint's
-# dataset is retained separately as ``trained_dataset`` for prompt/mask setup.
-if cli_model is not None:
-    args_json['model'] = cli_model
-args_json['dataset'] = dataset
-if args_json.get('model') == 'BatLiNet':
-    # BatLiNet's data loaders pick the val/test splits via target_dataset.
-    args_json['target_dataset'] = dataset
-cli_num_workers = args.num_workers
-args_json['batch_size'] = batch_size
+    nowtime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    set_seed(args.seed)
+    # ddp_kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
+    # deepspeed_plugin = DeepSpeedPlugin(hf_ds_config='./ds_config_zero_ours.json')
+    # accelerator = Accelerator(kwargs_handlers=[ddp_kwargs], deepspeed_plugin=deepspeed_plugin)
+    ddp_kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
+    # deepspeed_plugin = DeepSpeedPlugin(hf_ds_config='./ds_config_zero_ours.json')
+    # accelerator = Accelerator(kwargs_handlers=[ddp_kwargs], deepspeed_plugin=deepspeed_plugin, gradient_accumulation_steps=args.accumulation_steps)
+    accelerator = Accelerator(kwargs_handlers=[ddp_kwargs], gradient_accumulation_steps=args.accumulation_steps)
+    # load from the saved path
+    args_path = args.args_path
+    dataset = args.eval_dataset
+    cli_model = args.model
+    alpha = args.alpha1
+    alpha2 = args.alpha2
+    cli_root_path = args.root_path
+    args_json = json.load(open(f'{args_path}args.json'))
+    trained_dataset = args_json['dataset']
+    # The command line identifies the dataset being evaluated.  The checkpoint's
+    # dataset is retained separately as ``trained_dataset`` for prompt/mask setup.
+    if cli_model is not None:
+        args_json['model'] = cli_model
+    args_json['dataset'] = dataset
+    if args_json.get('model') == 'BatLiNet':
+        # BatLiNet's data loaders pick the val/test splits via target_dataset.
+        args_json['target_dataset'] = dataset
+    cli_num_workers = args.num_workers
+    args_json['batch_size'] = batch_size
 
-args.__dict__ = args_json
-# Checkpoint arguments provide defaults, while an explicitly supplied CLI
-# root path must take precedence (for example, scripts/evaluate_model.sh).
-if cli_root_path is not None:
-    args.root_path = cli_root_path
-elif getattr(args, 'root_path', None) is None:
-    args.root_path = './dataset/HUST_dataset/'
-args.num_workers = cli_num_workers
+    args.__dict__ = args_json
+    # Checkpoint arguments provide defaults, while an explicitly supplied CLI
+    # root path must take precedence (for example, scripts/evaluate_model.sh).
+    if cli_root_path is not None:
+        args.root_path = cli_root_path
+    elif getattr(args, 'root_path', None) is None:
+        args.root_path = './dataset/HUST_dataset/'
+    args.num_workers = cli_num_workers
 
-for ii in range(args.itr):
-    # setting record of experiments
-    # setting = '{}_{}_{}_{}_le{}_bs{}_lr{}_dm{}_nh{}_el{}_dl{}_df{}_mdf{}_lradj{}_{}_guide{}_LB{}_loss{}_wd{}_wl{}_dr{}_gdff{}_E{}_GE{}_K{}_S{}_aug{}_augW{}_tem{}_wDG{}_dsr{}_we{}_ffs{}_seed{}'.format(
-    #     args.model,
-    #     args.dk_factor,
-    #     args.llm_choice,
-    #     args.seq_len,
-    #     args.least_epochs,
-    #     args.batch_size,
-    #     args.learning_rate,
-    #     args.d_model,
-    #     args.n_heads,
-    #     args.e_layers,
-    #     args.d_layers,
-    #     args.d_ff,
-    #     args.min_d_ff,
-    #     args.lradj, trained_dataset, args.use_guide, args.use_LB, args.loss, args.wd, args.weighted_loss, args.dropout, args.gate_d_ff, 
-    #     args.num_experts, args.num_general_experts,
-    #     args.topK, args.use_domainSampler, args.use_aug, args.aug_w, args.temperature, args.weighted_CLDG, args.down_sample_ratio, args.warm_up_epoches, args.use_dff_scale, args.seed)
+    for ii in range(args.itr):
+        # setting record of experiments
+        # setting = '{}_{}_{}_{}_le{}_bs{}_lr{}_dm{}_nh{}_el{}_dl{}_df{}_mdf{}_lradj{}_{}_guide{}_LB{}_loss{}_wd{}_wl{}_dr{}_gdff{}_E{}_GE{}_K{}_S{}_aug{}_augW{}_tem{}_wDG{}_dsr{}_we{}_ffs{}_seed{}'.format(
+        #     args.model,
+        #     args.dk_factor,
+        #     args.llm_choice,
+        #     args.seq_len,
+        #     args.least_epochs,
+        #     args.batch_size,
+        #     args.learning_rate,
+        #     args.d_model,
+        #     args.n_heads,
+        #     args.e_layers,
+        #     args.d_layers,
+        #     args.d_ff,
+        #     args.min_d_ff,
+        #     args.lradj, trained_dataset, args.use_guide, args.use_LB, args.loss, args.wd, args.weighted_loss, args.dropout, args.gate_d_ff,
+        #     args.num_experts, args.num_general_experts,
+        #     args.topK, args.use_domainSampler, args.use_aug, args.aug_w, args.temperature, args.weighted_CLDG, args.down_sample_ratio, args.warm_up_epoches, args.use_dff_scale, args.seed)
 
 
-    # CP transfer checkpoints trained with Dataset_original use the baseline
-    # 9-field sample format.  Keep that data path while using this evaluator's
-    # checkpoint loading (which does not require life_class_scaler).
-    use_baseline_data = args.data == 'Dataset_original'
-    data_provider_func = data_provider_evaluate_BL if use_baseline_data else data_provider_LLM_evaluate
-    if args.model == 'CPTransformerDeepSeekMoE':
-        model_ec_config = BatteryElectrochemicalConfig(args.__dict__)
-        model_text_config = AutoConfig.from_pretrained(args.LLM_path) if getattr(args, 'LLM_path', None) else None
-        model_config = BatteryLifeConfig(model_ec_config, model_text_config)
-        model = CPTransformerDeepSeekMoE.Model(model_config)
-    elif args.model == 'PBT':
-        model_ec_config = BatteryElectrochemicalConfig(args.__dict__)
-        model_text_config = AutoConfig.from_pretrained(args.LLM_path) if getattr(args, 'LLM_path', None) else None
-        model_config = BatteryLifeConfig(model_ec_config, model_text_config)
-        model = PBT.Model(model_config)
-    elif args.model == 'CPMLP':
-        model_ec_config = BatteryElectrochemicalConfig(args.__dict__)
-        model_text_config = AutoConfig.from_pretrained(args.LLM_path) if getattr(args, 'LLM_path', None) else None
-        model_config = BatteryLifeConfig(model_ec_config, model_text_config)
-        model = CPMLP.Model(model_config)
-    elif args.model == 'CPTransformer':
-        model_ec_config = BatteryElectrochemicalConfig(args.__dict__)
-        model_text_config = AutoConfig.from_pretrained(args.LLM_path) if getattr(args, 'LLM_path', None) else None
-        model_config = BatteryLifeConfig(model_ec_config, model_text_config)
-        model = CPTransformer.Model(model_config)
-    elif args.model == 'BatLiNet':
-        model = BatLiNet.Model(
-            args.in_channels, args.channels, args.input_height, args.input_width
-        ).float()
-    else:
-        raise Exception('Not Implemented')
+        # CP transfer checkpoints trained with Dataset_original use the baseline
+        # 9-field sample format.  Keep that data path while using this evaluator's
+        # checkpoint loading (which does not require life_class_scaler).
+        use_baseline_data = args.data == 'Dataset_original'
+        data_provider_func = data_provider_evaluate_BL if use_baseline_data else data_provider_LLM_evaluate
+        if args.model == 'CPTransformerDeepSeekMoE':
+            model_ec_config = BatteryElectrochemicalConfig(args.__dict__)
+            model_text_config = AutoConfig.from_pretrained(args.LLM_path) if getattr(args, 'LLM_path', None) else None
+            model_config = BatteryLifeConfig(model_ec_config, model_text_config)
+            model = CPTransformerDeepSeekMoE.Model(model_config)
+        elif args.model == 'PBT':
+            model_ec_config = BatteryElectrochemicalConfig(args.__dict__)
+            # PBT consumes precomputed DKP embeddings, not an LLM backbone.
+            model_config = BatteryLifeConfig(model_ec_config)
+            model = PBT.Model(model_config)
+        elif args.model == 'CPMLP':
+            model_ec_config = BatteryElectrochemicalConfig(args.__dict__)
+            model_text_config = AutoConfig.from_pretrained(args.LLM_path) if getattr(args, 'LLM_path', None) else None
+            model_config = BatteryLifeConfig(model_ec_config, model_text_config)
+            model = CPMLP.Model(model_config)
+        elif args.model == 'CPTransformer':
+            model_ec_config = BatteryElectrochemicalConfig(args.__dict__)
+            model_text_config = AutoConfig.from_pretrained(args.LLM_path) if getattr(args, 'LLM_path', None) else None
+            model_config = BatteryLifeConfig(model_ec_config, model_text_config)
+            model = CPTransformer.Model(model_config)
+        elif args.model == 'BatLiNet':
+            model = BatLiNet.Model(
+                args.in_channels, args.channels, args.input_height, args.input_width
+            ).float()
+        else:
+            raise Exception('Not Implemented')
 
-    trained_parameters = []
-    trained_parameters_names = []
-    finetune_method = args.finetune_method if 'finetune_method' in args_json else None
-    if finetune_method == 'AT' and args.model in ['CPMLP', 'CPTransformer']:
-        model = add_adapters_withCP(args, model, args.adapter_size)
-        for name, p in model.named_parameters():
-            if ('adapter' in name or 'gate' in name or 'regression_head' in name) and p.requires_grad:
-                trained_parameters_names.append(name)
-                trained_parameters.append(p)
-    elif finetune_method == 'AT':
-        # adapter tuning, legacy name: AT_nB
-        model = add_adapters_to_PBT_withCP_flex(args, model, args.adapter_size) # add adapters before and after that flattenIntra
-        for name, p in model.named_parameters():
-            if 'adapter' in name or 'regression_head' in name:
-                if p.requires_grad is True:
+        trained_parameters = []
+        trained_parameters_names = []
+        finetune_method = args.finetune_method if 'finetune_method' in args_json else None
+        if finetune_method == 'AT' and args.model in ['CPMLP', 'CPTransformer']:
+            model = add_adapters_withCP(args, model, args.adapter_size)
+            for name, p in model.named_parameters():
+                if ('adapter' in name or 'gate' in name or 'regression_head' in name) and p.requires_grad:
                     trained_parameters_names.append(name)
                     trained_parameters.append(p)
-    elif finetune_method == 'AT_reverse' and args.model in ['CPMLP', 'CPTransformer']:
-        model = add_adapters_withoutCP_reverse(args, model, args.adapter_size)
-        for name, p in model.named_parameters():
-            if ('adapter' in name or 'gate' in name or 'regression_head' in name) and p.requires_grad:
-                trained_parameters_names.append(name)
-                trained_parameters.append(p)
-    elif finetune_method == 'AT_reverse':
-        model = add_adapters_to_PBT_reverse(args, model, args.adapter_size)
-        for name, p in model.named_parameters():
-            if 'adapter' in name or 'regression_head' in name:
-                if p.requires_grad:
+        elif finetune_method == 'AT':
+            # adapter tuning, legacy name: AT_nB
+            model = add_adapters_to_PBT_withCP_flex(args, model, args.adapter_size) # add adapters before and after that flattenIntra
+            for name, p in model.named_parameters():
+                if 'adapter' in name or 'regression_head' in name:
+                    if p.requires_grad is True:
+                        trained_parameters_names.append(name)
+                        trained_parameters.append(p)
+        elif finetune_method == 'AT_reverse' and args.model in ['CPMLP', 'CPTransformer']:
+            model = add_adapters_withoutCP_reverse(args, model, args.adapter_size)
+            for name, p in model.named_parameters():
+                if ('adapter' in name or 'gate' in name or 'regression_head' in name) and p.requires_grad:
                     trained_parameters_names.append(name)
                     trained_parameters.append(p)
-    elif finetune_method == 'AT_nCP' and args.model in ['CPMLP', 'CPTransformer']:
-        # Adapter tuning without an adapter on the CP flatten layer.
-        model = add_adapters_withoutCP(args, model, args.adapter_size)
-        for name, p in model.named_parameters():
-            if ('adapter' in name or 'gate' in name or 'regression_head' in name) and p.requires_grad:
-                trained_parameters_names.append(name)
-                trained_parameters.append(p)
-    elif finetune_method == 'AT_nCP':
-        # adapter tuning without adapter before CyclePatch layer
-        model = add_adapters_to_PBT_flex(args, model, args.adapter_size) # add adapters before and after that flattenIntra
-        for name, p in model.named_parameters():
-            if 'adapter' in name or 'regression_head' in name:
-                if p.requires_grad is True:
+        elif finetune_method == 'AT_reverse':
+            model = add_adapters_to_PBT_reverse(args, model, args.adapter_size)
+            for name, p in model.named_parameters():
+                if 'adapter' in name or 'regression_head' in name:
+                    if p.requires_grad:
+                        trained_parameters_names.append(name)
+                        trained_parameters.append(p)
+        elif finetune_method == 'AT_nCP' and args.model in ['CPMLP', 'CPTransformer']:
+            # Adapter tuning without an adapter on the CP flatten layer.
+            model = add_adapters_withoutCP(args, model, args.adapter_size)
+            for name, p in model.named_parameters():
+                if ('adapter' in name or 'gate' in name or 'regression_head' in name) and p.requires_grad:
                     trained_parameters_names.append(name)
                     trained_parameters.append(p)
-    else:
-        # This parameters are not finetuned
-        pass
-    
-    path = args_path  # unique checkpoint saving path
-    
+        elif finetune_method == 'AT_nCP':
+            # adapter tuning without adapter before CyclePatch layer
+            model = add_adapters_to_PBT_flex(args, model, args.adapter_size) # add adapters before and after that flattenIntra
+            for name, p in model.named_parameters():
+                if 'adapter' in name or 'regression_head' in name:
+                    if p.requires_grad is True:
+                        trained_parameters_names.append(name)
+                        trained_parameters.append(p)
+        else:
+            # This parameters are not finetuned
+            pass
 
-    if not 'MIX_all' in trained_dataset:
-        temperature2mask = gate_masker.MIX_large_temperature2mask
-        format2mask = gate_masker.MIX_large_format2mask
-        cathodes2mask = gate_masker.MIX_large_cathodes2mask
-        anode2mask = gate_masker.MIX_large_anode2mask
-        ion2mask = None
-    else:
-        temperature2mask = gate_masker.MIX_all_temperature2mask
-        format2mask = gate_masker.MIX_all_format2mask
-        cathodes2mask = gate_masker.MIX_all_cathode2mask
-        anode2mask = gate_masker.MIX_all_anode2mask
-        ion2mask = gate_masker.MIX_all_ion2mask
-
-    label_scaler = joblib.load(f'{path}label_scaler')
-    std, mean_value = np.sqrt(label_scaler.var_[-1]), label_scaler.mean_[-1]
-    accelerator.print("Loading training samples......")
-    accelerator.print("Loading test samples......")
-    if use_baseline_data:
-        # BatLiNet checkpoints are trained with Dataset_original and save both
-        # scalers; the life-class scaler is optional for evaluation.
-        life_class_scaler = None
-        if args.model == 'BatLiNet':
-            life_class_scaler_path = os.path.join(path, 'life_class_scaler')
-            life_class_scaler = joblib.load(life_class_scaler_path) if os.path.exists(life_class_scaler_path) else None
-        test_data, test_loader = data_provider_func(
-            args, 'test', label_scaler=label_scaler,
-            eval_cycle_min=eval_cycle_min, eval_cycle_max=eval_cycle_max,
-            life_class_scaler=life_class_scaler,
-        )
-    else:
-        test_data, test_loader = data_provider_func(
-            args, 'test', label_scaler=label_scaler,
-            eval_cycle_min=eval_cycle_min, eval_cycle_max=eval_cycle_max,
-            temperature2mask=temperature2mask, format2mask=format2mask,
-            cathodes2mask=cathodes2mask, anode2mask=anode2mask,
-            ion2mask=ion2mask, trained_dataset=trained_dataset,
-        )
-    seen_condition_ids = {
-        int(condition_id)
-        for file_name in test_data.train_files + test_data.val_files
-        for condition_id in [_condition_id_for_file(test_data.name2domainID, file_name)]
-        if condition_id is not None
-    }
+        path = args_path  # unique checkpoint saving path
 
 
-    # load LoRA
-    # print the module name
-    for name, module in model._modules.items():
-        print (name," : ",module)
-        
-        
-    trained_parameters = []
-    for p in model.parameters():
-        if p.requires_grad is True:
-            trained_parameters.append(p)
+        if not 'MIX_all' in trained_dataset:
+            temperature2mask = gate_masker.MIX_large_temperature2mask
+            format2mask = gate_masker.MIX_large_format2mask
+            cathodes2mask = gate_masker.MIX_large_cathodes2mask
+            anode2mask = gate_masker.MIX_large_anode2mask
+            ion2mask = None
+        else:
+            temperature2mask = gate_masker.MIX_all_temperature2mask
+            format2mask = gate_masker.MIX_all_format2mask
+            cathodes2mask = gate_masker.MIX_all_cathode2mask
+            anode2mask = gate_masker.MIX_all_anode2mask
+            ion2mask = gate_masker.MIX_all_ion2mask
 
-    model_optim = optim.Adam(trained_parameters, lr=args.learning_rate)
-    
-    time_now = time.time()
+        label_scaler = joblib.load(f'{path}label_scaler')
+        std, mean_value = np.sqrt(label_scaler.var_[-1]), label_scaler.mean_[-1]
+        accelerator.print("Loading training samples......")
+        accelerator.print("Loading test samples......")
+        if use_baseline_data:
+            # BatLiNet checkpoints are trained with Dataset_original and save both
+            # scalers; the life-class scaler is optional for evaluation.
+            life_class_scaler = None
+            if args.model == 'BatLiNet':
+                life_class_scaler_path = os.path.join(path, 'life_class_scaler')
+                life_class_scaler = joblib.load(life_class_scaler_path) if os.path.exists(life_class_scaler_path) else None
+            test_data, test_loader = data_provider_func(
+                args, 'test', label_scaler=label_scaler,
+                eval_cycle_min=eval_cycle_min, eval_cycle_max=eval_cycle_max,
+                life_class_scaler=life_class_scaler,
+            )
+        else:
+            test_data, test_loader = data_provider_func(
+                args, 'test', label_scaler=label_scaler,
+                eval_cycle_min=eval_cycle_min, eval_cycle_max=eval_cycle_max,
+                temperature2mask=temperature2mask, format2mask=format2mask,
+                cathodes2mask=cathodes2mask, anode2mask=anode2mask,
+                ion2mask=ion2mask, trained_dataset=trained_dataset,
+            )
+        seen_condition_ids = {
+            int(condition_id)
+            for file_name in test_data.train_files + test_data.val_files
+            for condition_id in [_condition_id_for_file(test_data.name2domainID, file_name)]
+            if condition_id is not None
+        }
+
+
+        # load LoRA
+        # print the module name
+        for name, module in model._modules.items():
+            print (name," : ",module)
+
+
+        trained_parameters = []
+        for p in model.parameters():
+            if p.requires_grad is True:
+                trained_parameters.append(p)
+
+        model_optim = optim.Adam(trained_parameters, lr=args.learning_rate)
+
+        time_now = time.time()
 
 
 
-    criterion = nn.MSELoss()
-    accumulation_steps = args.accumulation_steps
-    load_checkpoint_in_model(model, path) # load the saved parameters into model
-    test_loader, model, model_optim = accelerator.prepare(test_loader, model, model_optim)
-    accelerator.print(f'The model is {args.model}')
-    accelerator.print(f'load model from:\n {path}')
-    # accelerator.load_checkpoint_in_model(model, path) # load the saved parameters into model
-    accelerator.print(f'Model is loaded!')
+        criterion = nn.MSELoss()
+        accumulation_steps = args.accumulation_steps
+        load_checkpoint_in_model(model, path) # load the saved parameters into model
+        test_loader, model, model_optim = accelerator.prepare(test_loader, model, model_optim)
+        accelerator.print(f'The model is {args.model}')
+        accelerator.print(f'load model from:\n {path}')
+        # accelerator.load_checkpoint_in_model(model, path) # load the saved parameters into model
+        accelerator.print(f'Model is loaded!')
 
 
-    total_transformed_preds, total_transformed_labels, total_cycles, total_inputs = [], [], [], []
-    sample_size = 0
-    total_preds, total_references = [], []
-    total_dataset_ids = []
-    total_domain_ids = []
-    total_seen_unseen_ids = []
-    total_seen_number_of_cycles = []
-    model.eval() # set the model to evaluation mode
-    with torch.no_grad():
-        for i, batch in tqdm(enumerate(test_loader)):
-            if use_baseline_data and args.model == 'BatLiNet':
-                (cycle_curve_data, curve_attn_mask, labels, _life_class,
-                 _scaled_life_class, _weights, seen_unseen_ids, _features,
-                 data_batch, dataset_ids, domain_ids) = batch
-                # Same feature/support-set route as BatLiNet training.
-                x = data_batch.feature.to(accelerator.device)
-                y = data_batch.label.to(accelerator.device)
-                raw_x = data_batch.raw_feature
-                sup_x, sup_y = get_support_set(
-                    raw_x, test_data.total_features, test_data.total_labels,
-                    args, training=False,
-                )
-                sup_x = sup_x.float().to(accelerator.device)
-                sup_y = sup_y.float().to(accelerator.device)
-                labels = labels.float()
-                result = model(x, y, sup_x, sup_y, training=False)
-                # Be compatible with both `outputs` and `(outputs, loss)` returns.
-                outputs = result[0] if isinstance(result, (tuple, list)) else result
-                cut_off = labels.shape[0]
-                outputs = outputs[:cut_off]
-                dataset_ids = dataset_ids.to(accelerator.device).reshape(-1)[:cut_off]
-                domain_ids = domain_ids.to(accelerator.device).reshape(-1)[:cut_off]
-            elif use_baseline_data:
-                (cycle_curve_data, curve_attn_mask, labels, _life_class,
-                 _scaled_life_class, weights, dataset_ids, seen_unseen_ids,
-                 domain_ids) = batch
-                outputs, _, _, _, _, _, _, _ = model(
-                    cycle_curve_data, curve_attn_mask
-                )
+        total_transformed_preds, total_transformed_labels, total_cycles, total_inputs = [], [], [], []
+        sample_size = 0
+        total_preds, total_references = [], []
+        total_dataset_ids = []
+        total_domain_ids = []
+        total_seen_unseen_ids = []
+        total_seen_number_of_cycles = []
+        model.eval() # set the model to evaluation mode
+        with torch.no_grad():
+            for i, batch in tqdm(enumerate(test_loader)):
+                if use_baseline_data and args.model == 'BatLiNet':
+                    (cycle_curve_data, curve_attn_mask, labels, _life_class,
+                     _scaled_life_class, _weights, seen_unseen_ids, _features,
+                     data_batch, dataset_ids, domain_ids) = batch
+                    # Same feature/support-set route as BatLiNet training.
+                    x = data_batch.feature.to(accelerator.device)
+                    y = data_batch.label.to(accelerator.device)
+                    raw_x = data_batch.raw_feature
+                    sup_x, sup_y = get_support_set(
+                        raw_x, test_data.total_features, test_data.total_labels,
+                        args, training=False,
+                    )
+                    sup_x = sup_x.float().to(accelerator.device)
+                    sup_y = sup_y.float().to(accelerator.device)
+                    labels = labels.float()
+                    result = model(x, y, sup_x, sup_y, training=False)
+                    # Be compatible with both `outputs` and `(outputs, loss)` returns.
+                    outputs = result[0] if isinstance(result, (tuple, list)) else result
+                    cut_off = labels.shape[0]
+                    outputs = outputs[:cut_off]
+                    dataset_ids = dataset_ids.to(accelerator.device).reshape(-1)[:cut_off]
+                    domain_ids = domain_ids.to(accelerator.device).reshape(-1)[:cut_off]
+                elif use_baseline_data:
+                    (cycle_curve_data, curve_attn_mask, labels, _life_class,
+                     _scaled_life_class, weights, dataset_ids, seen_unseen_ids,
+                     domain_ids) = batch
+                    outputs, _, _, _, _, _, _, _ = model(
+                        cycle_curve_data, curve_attn_mask
+                    )
+                else:
+                    (cycle_curve_data, curve_attn_mask, labels, weights,
+                     dataset_ids, seen_unseen_ids, DKP_embeddings, cathode_masks,
+                     temperature_masks, format_masks, anode_masks, ion_type_masks,
+                     combined_masks, domain_ids) = batch
+                    outputs, _, _, _, _, _, _, _ = model(
+                        cycle_curve_data, curve_attn_mask,
+                        DKP_embeddings=DKP_embeddings,
+                        cathode_masks=cathode_masks,
+                        temperature_masks=temperature_masks,
+                        format_masks=format_masks,
+                        anode_masks=anode_masks,
+                        ion_type_masks=ion_type_masks,
+                        combined_masks=combined_masks,
+                    )
+                seen_number_of_cycles = torch.sum(curve_attn_mask, dim=1) # [B]
+                # self.accelerator.wait_for_everyone()
+                transformed_preds = outputs * std + mean_value
+                transformed_labels = labels * std + mean_value
+                all_predictions, all_targets, dataset_ids, seen_unseen_ids, domain_ids, seen_number_of_cycles = accelerator.gather_for_metrics((transformed_preds, transformed_labels, dataset_ids, seen_unseen_ids, domain_ids, seen_number_of_cycles))
+
+                total_preds = total_preds + all_predictions.detach().cpu().numpy().reshape(-1).tolist()
+                total_domain_ids = total_domain_ids + domain_ids.detach().cpu().numpy().reshape(-1).tolist()
+                total_references = total_references + all_targets.detach().cpu().numpy().reshape(-1).tolist()
+                total_dataset_ids = total_dataset_ids + dataset_ids.detach().cpu().numpy().reshape(-1).tolist()
+                total_seen_unseen_ids = total_seen_unseen_ids + seen_unseen_ids.detach().cpu().numpy().reshape(-1).tolist()
+                total_seen_number_of_cycles = total_seen_number_of_cycles + seen_number_of_cycles.detach().cpu().numpy().reshape(-1).tolist()
+
+        res_path = results_dir or f'./results/{eval_cycle_min}_{eval_cycle_max}_analysis/'
+        save_res = {}
+        save_res[dataset] = {}
+        # accelerator.wait_for_everyone()
+        accelerator.set_trigger()
+        if accelerator.check_trigger():
+            os.makedirs(res_path, exist_ok=True)
+            total_dataset_ids = np.array(total_dataset_ids)
+            total_domain_ids = np.array(total_domain_ids)
+            total_references = np.array(total_references)
+            total_seen_unseen_ids = np.array(total_seen_unseen_ids)
+            total_seen_number_of_cycles = np.array(total_seen_number_of_cycles)
+            total_preds = np.array(total_preds)
+
+
+            relative_error = abs(total_preds - total_references) / total_references
+            hit_num = sum(relative_error<=alpha2)
+            alpha_acc2 = hit_num / len(total_references) * 100
+
+
+            relative_error = abs(total_preds - total_references) / total_references
+            hit_num = sum(relative_error<=alpha)
+            alpha_acc = hit_num / len(total_references) * 100
+
+            tmp_mapes = np.abs(total_preds-total_references) / total_references
+
+            condition_metrics = condition_level_mape(
+                total_preds, total_references, total_domain_ids.astype(int), seen_condition_ids
+            )
+            mape = float(mean_absolute_percentage_error(total_references, total_preds))
+            save_res[dataset]['mapes'] = list(tmp_mapes)
+            save_res[dataset]['Useable_cycle_number'] = list(total_seen_number_of_cycles)
+            save_res[dataset]['total_references'] = list(total_references)
+            save_res[dataset]['total_preds'] = list(total_preds)
+            save_res[dataset]['total_seen_unseen_ids'] = list(total_seen_unseen_ids)
+            save_res[dataset]['domain_ids'] = list(total_domain_ids)
+            save_res[dataset]['cell_level_mape'] = mape
+            save_res[dataset]['aging_condition_level_metrics'] = condition_metrics
+            trained_seed = args_json['seed']
+            model_name = args_json['model']
+            with open(os.path.join(res_path, f'{model_name}_{dataset}_{trained_seed}.json'), 'w') as f:
+                json.dump(save_res, f)
+
+            if metrics_output:
+                metrics_parent = os.path.dirname(metrics_output)
+                if metrics_parent:
+                    os.makedirs(metrics_parent, exist_ok=True)
+
+                def format_metric(value):
+                    return 'NA' if value is None else f'{value:.10f}'
+
+                with open(metrics_output, 'w') as f:
+                    f.write(f'cell_level_mape: {format_metric(mape)}\n')
+                    f.write('aging_condition_level_mape: '
+                            f"{format_metric(condition_metrics['macro_mape'])}\n")
+                    f.write('seen_aging_condition_level_mape: '
+                            f"{format_metric(condition_metrics['seen_macro_mape'])}\n")
+                    f.write('unseen_aging_condition_level_mape: '
+                            f"{format_metric(condition_metrics['unseen_macro_mape'])}\n")
+                    f.write(f"seen_aging_condition_count: {condition_metrics['seen_condition_count']}\n")
+                    f.write(f"unseen_aging_condition_count: {condition_metrics['unseen_condition_count']}\n")
+
+            accelerator.print(
+                f'{dataset} | Eval cycle: {eval_cycle_min}-{eval_cycle_max} | '
+                f'Condition-level MAPE: {condition_metrics["macro_mape"]} | '
+                f'Seen condition-level MAPE: {condition_metrics["seen_macro_mape"]} | '
+                f'Unseen condition-level MAPE: {condition_metrics["unseen_macro_mape"]}'
+            )
+            # calculate the model performance on the samples from the seen and unseen aging conditions
+            seen_references = total_references[total_seen_unseen_ids==1] if np.any(total_seen_unseen_ids==1) else np.array([0])
+            unseen_references = total_references[total_seen_unseen_ids==0] if np.any(total_seen_unseen_ids==0) else np.array([0])
+            seen_preds = total_preds[total_seen_unseen_ids==1] if np.any(total_seen_unseen_ids==1) else np.array([1])
+            unseen_preds = total_preds[total_seen_unseen_ids==0] if np.any(total_seen_unseen_ids==0) else np.array([1])
+
+            # MAPE
+            seen_mape = mean_absolute_percentage_error(seen_references, seen_preds)
+            if len(unseen_preds) > 0:
+                unseen_mape = mean_absolute_percentage_error(unseen_references, unseen_preds)
             else:
-                (cycle_curve_data, curve_attn_mask, labels, weights,
-                 dataset_ids, seen_unseen_ids, DKP_embeddings, cathode_masks,
-                 temperature_masks, format_masks, anode_masks, ion_type_masks,
-                 combined_masks, domain_ids) = batch
-                outputs, _, _, _, _, _, _, _ = model(
-                    cycle_curve_data, curve_attn_mask,
-                    DKP_embeddings=DKP_embeddings,
-                    cathode_masks=cathode_masks,
-                    temperature_masks=temperature_masks,
-                    format_masks=format_masks,
-                    anode_masks=anode_masks,
-                    ion_type_masks=ion_type_masks,
-                    combined_masks=combined_masks,
-                )
-            seen_number_of_cycles = torch.sum(curve_attn_mask, dim=1) # [B]
-            # self.accelerator.wait_for_everyone()
-            transformed_preds = outputs * std + mean_value
-            transformed_labels = labels * std + mean_value
-            all_predictions, all_targets, dataset_ids, seen_unseen_ids, domain_ids, seen_number_of_cycles = accelerator.gather_for_metrics((transformed_preds, transformed_labels, dataset_ids, seen_unseen_ids, domain_ids, seen_number_of_cycles))
+                unseen_mape = -10000
 
-            total_preds = total_preds + all_predictions.detach().cpu().numpy().reshape(-1).tolist()
-            total_domain_ids = total_domain_ids + domain_ids.detach().cpu().numpy().reshape(-1).tolist()
-            total_references = total_references + all_targets.detach().cpu().numpy().reshape(-1).tolist()
-            total_dataset_ids = total_dataset_ids + dataset_ids.detach().cpu().numpy().reshape(-1).tolist()
-            total_seen_unseen_ids = total_seen_unseen_ids + seen_unseen_ids.detach().cpu().numpy().reshape(-1).tolist()
-            total_seen_number_of_cycles = total_seen_number_of_cycles + seen_number_of_cycles.detach().cpu().numpy().reshape(-1).tolist()
-
-    res_path = results_dir or f'./results/{eval_cycle_min}_{eval_cycle_max}_analysis/'
-    save_res = {}
-    save_res[dataset] = {}
-    # accelerator.wait_for_everyone()
-    accelerator.set_trigger()
-    if accelerator.check_trigger():
-        os.makedirs(res_path, exist_ok=True)
-        total_dataset_ids = np.array(total_dataset_ids)
-        total_domain_ids = np.array(total_domain_ids)
-        total_references = np.array(total_references)
-        total_seen_unseen_ids = np.array(total_seen_unseen_ids)
-        total_seen_number_of_cycles = np.array(total_seen_number_of_cycles)
-        total_preds = np.array(total_preds)
-
-
-        relative_error = abs(total_preds - total_references) / total_references
-        hit_num = sum(relative_error<=alpha2)
-        alpha_acc2 = hit_num / len(total_references) * 100
-
-
-        relative_error = abs(total_preds - total_references) / total_references
-        hit_num = sum(relative_error<=alpha)
-        alpha_acc = hit_num / len(total_references) * 100
-
-        tmp_mapes = np.abs(total_preds-total_references) / total_references
-
-        condition_metrics = condition_level_mape(
-            total_preds, total_references, total_domain_ids.astype(int), seen_condition_ids
-        )
-        mape = float(mean_absolute_percentage_error(total_references, total_preds))
-        save_res[dataset]['mapes'] = list(tmp_mapes)
-        save_res[dataset]['Useable_cycle_number'] = list(total_seen_number_of_cycles)
-        save_res[dataset]['total_references'] = list(total_references)
-        save_res[dataset]['total_preds'] = list(total_preds)
-        save_res[dataset]['total_seen_unseen_ids'] = list(total_seen_unseen_ids)
-        save_res[dataset]['domain_ids'] = list(total_domain_ids)
-        save_res[dataset]['cell_level_mape'] = mape
-        save_res[dataset]['aging_condition_level_metrics'] = condition_metrics
-        trained_seed = args_json['seed']
-        model_name = args_json['model']
-        with open(os.path.join(res_path, f'{model_name}_{dataset}_{trained_seed}.json'), 'w') as f:
-            json.dump(save_res, f)
-
-        if metrics_output:
-            metrics_parent = os.path.dirname(metrics_output)
-            if metrics_parent:
-                os.makedirs(metrics_parent, exist_ok=True)
-
-            def format_metric(value):
-                return 'NA' if value is None else f'{value:.10f}'
-
-            with open(metrics_output, 'w') as f:
-                f.write(f'cell_level_mape: {format_metric(mape)}\n')
-                f.write('aging_condition_level_mape: '
-                        f"{format_metric(condition_metrics['macro_mape'])}\n")
-                f.write('seen_aging_condition_level_mape: '
-                        f"{format_metric(condition_metrics['seen_macro_mape'])}\n")
-                f.write('unseen_aging_condition_level_mape: '
-                        f"{format_metric(condition_metrics['unseen_macro_mape'])}\n")
-                f.write(f"seen_aging_condition_count: {condition_metrics['seen_condition_count']}\n")
-                f.write(f"unseen_aging_condition_count: {condition_metrics['unseen_condition_count']}\n")
-
-        accelerator.print(
-            f'{dataset} | Eval cycle: {eval_cycle_min}-{eval_cycle_max} | '
-            f'Condition-level MAPE: {condition_metrics["macro_mape"]} | '
-            f'Seen condition-level MAPE: {condition_metrics["seen_macro_mape"]} | '
-            f'Unseen condition-level MAPE: {condition_metrics["unseen_macro_mape"]}'
-        )
-        # calculate the model performance on the samples from the seen and unseen aging conditions
-        seen_references = total_references[total_seen_unseen_ids==1] if np.any(total_seen_unseen_ids==1) else np.array([0])
-        unseen_references = total_references[total_seen_unseen_ids==0] if np.any(total_seen_unseen_ids==0) else np.array([0])
-        seen_preds = total_preds[total_seen_unseen_ids==1] if np.any(total_seen_unseen_ids==1) else np.array([1])
-        unseen_preds = total_preds[total_seen_unseen_ids==0] if np.any(total_seen_unseen_ids==0) else np.array([1])
-
-        # MAPE
-        seen_mape = mean_absolute_percentage_error(seen_references, seen_preds)
-        if len(unseen_preds) > 0:
-            unseen_mape = mean_absolute_percentage_error(unseen_references, unseen_preds)
-        else:
-            unseen_mape = -10000
-
-        # alpha-acc1 
-        relative_error = abs(seen_preds - seen_references) / seen_references
-        hit_num = sum(relative_error<=args.alpha1)
-        seen_alpha_acc1 = hit_num / len(seen_references) * 100
-
-        
-        if len(unseen_preds) > 0:
-            relative_error = abs(unseen_preds - unseen_references) / unseen_references
+            # alpha-acc1
+            relative_error = abs(seen_preds - seen_references) / seen_references
             hit_num = sum(relative_error<=args.alpha1)
-            unseen_alpha_acc1 = hit_num / len(unseen_references) * 100
-        else:
-            unseen_alpha_acc1 = -10000
+            seen_alpha_acc1 = hit_num / len(seen_references) * 100
 
-        # alpha-acc2
-        relative_error = abs(seen_preds - seen_references) / seen_references
-        hit_num = sum(relative_error<=args.alpha2)
-        seen_alpha_acc2 = hit_num / len(seen_references) * 100
 
-        if len(unseen_preds) > 0:
-            relative_error = abs(unseen_preds - unseen_references) / unseen_references
+            if len(unseen_preds) > 0:
+                relative_error = abs(unseen_preds - unseen_references) / unseen_references
+                hit_num = sum(relative_error<=args.alpha1)
+                unseen_alpha_acc1 = hit_num / len(unseen_references) * 100
+            else:
+                unseen_alpha_acc1 = -10000
+
+            # alpha-acc2
+            relative_error = abs(seen_preds - seen_references) / seen_references
             hit_num = sum(relative_error<=args.alpha2)
-            unseen_alpha_acc2 = hit_num / len(unseen_references) * 100
-        else:
-            unseen_alpha_acc2 = -10000
+            seen_alpha_acc2 = hit_num / len(seen_references) * 100
 
-        if eval_cycle_min is None or eval_cycle_max is None:
-            calculate_metrics_based_on_seen_number_of_cycles(total_preds, total_references, total_seen_number_of_cycles, alpha, alpha2, args.model, dataset, trained_dataset=trained_dataset, start=args.seq_len, end=args.early_cycle_threshold, seed=args.seed, output_path=res_path)
+            if len(unseen_preds) > 0:
+                relative_error = abs(unseen_preds - unseen_references) / unseen_references
+                hit_num = sum(relative_error<=args.alpha2)
+                unseen_alpha_acc2 = hit_num / len(unseen_references) * 100
+            else:
+                unseen_alpha_acc2 = -10000
+
+            if eval_cycle_min is None or eval_cycle_max is None:
+                calculate_metrics_based_on_seen_number_of_cycles(total_preds, total_references, total_seen_number_of_cycles, alpha, alpha2, args.model, dataset, trained_dataset=trained_dataset, start=args.seq_len, end=args.early_cycle_threshold, seed=args.seed, output_path=res_path)
