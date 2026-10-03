@@ -22,28 +22,40 @@ early_cycle_threshold="${EARLY_CYCLE_THRESHOLD:-100}"
 comment="${RUN_NAME:-${finetune_dataset}_AT_$(date +%Y%m%d_%H%M%S)_$$}"
 export WANDB_MODE="${WANDB_MODE:-disabled}"
 
-for required in args.json model.safetensors label_scaler; do
-  if [[ ! -f "$args_path$required" ]]; then
-    printf 'Missing checkpoint file: %s\n' "$args_path$required" >&2
+export PYTHONUNBUFFERED=1
+log_dir="${PBT_LOG_DIR:-$repo_root/logs/finetune}"
+mkdir -p "$log_dir"
+log_file="$log_dir/$comment.log"
+
+run_finetune() {
+  printf 'Run: %s\nLog: %s\nCheckpoint root: %s\n' "$comment" "$log_file" "$checkpoints"
+  for required in args.json model.safetensors label_scaler; do
+    if [[ ! -f "$args_path$required" ]]; then
+      printf 'Missing checkpoint file: %s\n' "$args_path$required" >&2
+      exit 1
+    fi
+  done
+  if [[ -e "$checkpoints/$comment" ]]; then
+    printf 'Run directory already exists; choose a different RUN_NAME: %s\n' "$checkpoints/$comment" >&2
     exit 1
   fi
-done
-if [[ -e "$checkpoints/$comment" ]]; then
-  printf 'Run directory already exists; choose a different RUN_NAME: %s\n' "$checkpoints/$comment" >&2
-  exit 1
-fi
 
-# macOS/MPS: full precision, one process, no data-loader subprocesses.
-accelerate launch --mixed_precision no --num_processes 1 \
-  --num_machines 1 --dynamo_backend no finetune_model.py \
-  --model PBT --task_name battery_life_prediction --is_training 1 \
-  --args_path "$args_path" --root_path "$root_path" \
-  --checkpoints "$checkpoints" --model_comment "$comment" \
-  --finetune_dataset "$finetune_dataset" --finetune_method AT \
-  --adapter_size "$adapter_size" --adapter_layers "$adapter_layers" \
-  --batch_size "$batch_size" --num_workers 0 --num_process 1 \
-  --learning_rate "$learning_rate" --train_epochs "$train_epochs" \
-  --least_epochs "$least_epochs" --patience "$patience" \
-  --seq_len "$seq_len" --early_cycle_threshold "$early_cycle_threshold" \
-  --dropout 0.0 --wd 0.0 --loss MSE --lradj constant \
-  --warm_up_epoches 0 --topK -1 --itr 1 --accumulation_steps 1
+  # macOS/MPS: full precision, one process, no data-loader subprocesses.
+  accelerate launch --mixed_precision no --num_processes 1 \
+    --num_machines 1 --dynamo_backend no finetune_model.py \
+    --model PBT --task_name battery_life_prediction --is_training 1 \
+    --args_path "$args_path" --root_path "$root_path" \
+    --checkpoints "$checkpoints" --model_comment "$comment" \
+    --finetune_dataset "$finetune_dataset" --finetune_method AT \
+    --adapter_size "$adapter_size" --adapter_layers "$adapter_layers" \
+    --batch_size "$batch_size" --num_workers 0 --num_process 1 \
+    --learning_rate "$learning_rate" --train_epochs "$train_epochs" \
+    --least_epochs "$least_epochs" --patience "$patience" \
+    --seq_len "$seq_len" --early_cycle_threshold "$early_cycle_threshold" \
+    --dropout 0.0 --wd 0.0 --loss MSE --lradj constant \
+    --warm_up_epoches 0 --topK -1 --itr 1 --accumulation_steps 1
+}
+
+# Capture stdout and stderr while streaming them to the terminal. With pipefail,
+# a failed trainer remains a failed script even when tee succeeds.
+run_finetune 2>&1 | tee -a "$log_file"

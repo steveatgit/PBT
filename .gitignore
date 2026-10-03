@@ -31,5 +31,6 @@ Cycling_Data/
 baseline_checkpoints/
 wandb/
 outs/
+logs/
 hugging_face_tutorial/
 data_processsing_script/
