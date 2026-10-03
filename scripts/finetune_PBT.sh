@@ -20,7 +20,8 @@ seq_len="${SEQ_LEN:-1}"
 early_cycle_threshold="${EARLY_CYCLE_THRESHOLD:-100}"
 # The trainer clears an existing run directory; use a unique name each time.
 comment="${RUN_NAME:-${finetune_dataset}_AT_$(date +%Y%m%d_%H%M%S)_$$}"
-export WANDB_MODE="${WANDB_MODE:-disabled}"
+# Enable W&B tracking by default; set WANDB_MODE=offline or disabled to override.
+export WANDB_MODE="${WANDB_MODE:-online}"
 
 export PYTHONUNBUFFERED=1
 log_dir="${PBT_LOG_DIR:-$repo_root/logs/finetune}"
